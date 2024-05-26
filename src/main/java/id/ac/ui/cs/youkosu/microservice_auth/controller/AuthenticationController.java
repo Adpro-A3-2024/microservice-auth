@@ -6,10 +6,7 @@ import id.ac.ui.cs.youkosu.microservice_auth.DTO.RegisterUserDTO;
 import id.ac.ui.cs.youkosu.microservice_auth.model.User;
 import id.ac.ui.cs.youkosu.microservice_auth.service.*;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/auth")
 @RestController
@@ -25,7 +22,16 @@ public class AuthenticationController {
 
     @PostMapping("/signup")
     public ResponseEntity<User> register(@RequestBody RegisterUserDTO registerUserDto) {
+        System.out.println(registerUserDto.getUsername());
         User registeredUser = authenticationService.signup(registerUserDto);
+
+        return ResponseEntity.ok(registeredUser);
+    }
+
+    @PostMapping("/admin-signup")
+    public ResponseEntity<User> registerAdmin(@RequestBody RegisterUserDTO registerUserDto) {
+        System.out.println(registerUserDto.getUsername());
+        User registeredUser = authenticationService.signupAdmin(registerUserDto);
 
         return ResponseEntity.ok(registeredUser);
     }

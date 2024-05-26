@@ -1,6 +1,5 @@
 package id.ac.ui.cs.youkosu.microservice_auth.model;
 
-import id.ac.ui.cs.youkosu.microservice_auth.model.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -32,11 +31,20 @@ public class User implements UserDetails {
     private String name;
     @Column
     private String address;
-    @Enumerated(EnumType.STRING)
+
+    @ManyToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
     private Role role;
+
+    public User setRole(Role role) {
+        this.role = role;
+        return this;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role.getName().toString());
+
+        return List.of(authority);
     }
 }

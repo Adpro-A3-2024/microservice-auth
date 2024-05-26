@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -58,11 +57,11 @@ public class JWTService {
                 .signWith(getSignInKey())
                 .compact();
     }
-    private String jwtSecret = "4261656C64756E67";
-    private SecretKey getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(this.jwtSecret);
-        return Keys.hmacShaKeyFor(keyBytes);
-    }
+//    private String jwtSecret = "4261656C64756E67";
+//    private SecretKey getSigningKey() {
+//        byte[] keyBytes = Decoders.BASE64.decode(this.jwtSecret);
+//        return Keys.hmacShaKeyFor(keyBytes);
+//    }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
@@ -77,17 +76,17 @@ public class JWTService {
         return extractClaim(token, Claims::getExpiration);
     }
 
+    private SecretKey getSignInKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+
     private Claims extractAllClaims(String token) {
         return Jwts
                 .parser()
-                .verifyWith(getSigningKey())
+                .verifyWith(getSignInKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
-    }
-
-    private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        return Keys.hmacShaKeyFor(keyBytes);
     }
 }
